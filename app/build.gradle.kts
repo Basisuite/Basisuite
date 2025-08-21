@@ -42,6 +42,9 @@ android {
 
 dependencies {
 
+    implementation(project(":flutter"))
+    implementation(project(":flutter_mixed"))
+
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.baseframework)

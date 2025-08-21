@@ -1,6 +1,7 @@
 package io.basisuite.app
 
 import android.os.Build
+import android.view.View
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -28,19 +29,44 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.kongzue.baseframework.BaseActivity
 import com.kongzue.baseframework.interfaces.LifeCircleListener
 import com.kongzue.baseframework.util.JumpParameter
+import com.wyq0918dev.flutter_mixed.FlutterMixed
+import com.wyq0918dev.flutter_mixed.MixedAware
+import com.wyq0918dev.flutter_mixed.MixedSignals
 
 class MainActivity : BaseActivity() {
+
+    private var mMixedSignals: MixedSignals? = null
+
+    private lateinit var mFlutterView: View
 
     override fun initViews(): Unit = setLifeCircleListener(mLifecycleListener)
     override fun initDatas(parameter: JumpParameter?): Unit = Unit
     override fun setEvents(): Unit = Unit
 
+
+    private val mMixedAware: MixedAware = object : MixedAware {
+        override fun onAttachSignals(signals: MixedSignals) {
+            mMixedSignals = signals
+        }
+
+        override fun onDetachSignals() {
+            mMixedSignals = null
+        }
+    }
+
     private val mLifecycleListener: LifeCircleListener = object : LifeCircleListener() {
         override fun onCreate() {
             super.onCreate()
+
+            FlutterMixed.initFlutter(application = application)
+            mFlutterView = FlutterMixed.loadFlutter(
+                activity = me,
+                aware = mMixedAware,
+            )
 
             enableEdgeToEdge()
             setContent {
@@ -181,7 +207,10 @@ class MainActivity : BaseActivity() {
                         .fillMaxSize()
                         .padding(paddingValues = innerPadding)
                 ) {
-
+                    AndroidView(
+                        factory = { mFlutterView },
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
             }
         }

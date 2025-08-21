@@ -11,14 +11,22 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
         mavenCentral()
         maven(url = "https://jitpack.io")
+        maven(url = "https://storage.googleapis.com/download.flutter.io")
     }
 }
+
+apply(
+    from = rootProject.projectDir.resolve(
+        relative = ".android/include_flutter.groovy"
+    )
+)
 
 rootProject.name = "Basisuite"
 include(":app")
